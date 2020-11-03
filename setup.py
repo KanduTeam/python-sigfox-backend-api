@@ -11,37 +11,38 @@ from os.path import join, dirname
 
 from sigfoxapi import __version__, __license__
 
-readme = open(join(dirname(__file__), 'README.rst')).read()
+readme = open(join(dirname(__file__), "README.rst")).read()
 
 requirements = [
-  r.strip() for r in open(join(dirname(__file__), 'requirements.txt')).readlines()
+    r.strip() for r in open(join(dirname(__file__), "requirements.txt")).readlines()
 ]
 
 test_requirements = [
-  r.strip() for r in open(join(dirname(__file__), 'test_requirements.txt')).readlines()
+    r.strip()
+    for r in open(join(dirname(__file__), "test_requirements.txt")).readlines()
 ]
 
 setup(
-    name='sigfoxapi',
+    name="sigfoxapi",
     version=__version__,
-    description='Python wrapper for the Sigfox backend REST API',
+    description="Python wrapper for the Sigfox backend REST API",
     long_description=readme,
-    author='Markus Juenemann',
-    author_email='markus@juenemann.net',
-    url='https://github.com/mjuenema/python-sigfox-backend-api',
-    packages=['sigfoxapi'],
-    package_dir={'sigfoxapi': 'sigfoxapi'},
+    author="Markus Juenemann",
+    author_email="markus@juenemann.net",
+    url="https://github.com/mjuenema/python-sigfox-backend-api",
+    packages=["sigfoxapi"],
+    package_dir={"sigfoxapi": "sigfoxapi"},
     include_package_data=True,
     install_requires=requirements,
     license=__license__,
     zip_safe=False,
-    keywords='sigfox',
+    keywords="sigfox",
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Programming Language :: Python :: 3',
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: BSD License",
+        "Programming Language :: Python :: 3",
     ],
-    test_suite='nose.collector',
-    tests_require=test_requirements
+    test_suite="nose.collector",
+    tests_require=test_requirements,
 )

@@ -17,11 +17,11 @@ import drest.serialization
 
 import sigfoxapi.requesthandler
 
-__author__ = 'Markus Juenemann <markus@juenemann.net>'
-__version__ = '0.3.0'
+__author__ = "Markus Juenemann <markus@juenemann.net>"
+__version__ = "0.3.0"
 __license__ = 'BSD 2-clause "Simplified" License'
 
-SIGFOX_API_URL = 'https://backend.sigfox.com/api/'
+SIGFOX_API_URL = "https://api.sigfox.com/v2/"
 
 IGNORE_SSL_VALIDATION = False
 """Set to ``True`` to ignore SSL validation problems."""
@@ -78,21 +78,25 @@ class SigfoxApiBadRequest(SigfoxApiError):
            ...     print("No Sigfox messages found before 01-May-2017")
 
     """
+
     pass
 
 
 class SigfoxApiAuthError(SigfoxApiError):
     """Exception for HTTP error 401 (Authentication Error)."""
+
     pass
 
 
 class SigfoxApiAccessDenied(SigfoxApiError):
     """Exception for HTTP error 403 (Access Denied)."""
+
     pass
 
 
 class SigfoxApiServerError(SigfoxApiError):
     """Exception for HTTP error 500 (Internal Server Error)."""
+
     pass
 
 
@@ -105,6 +109,7 @@ class SigfoxApiNotFound(SigfoxApiError):
        ...     print('Not found')
 
     """
+
     pass
 
 
@@ -135,7 +140,7 @@ class Object(object):
         except KeyError:
             raise AttributeError(name)
 
-    def __getitem__(self,  key):
+    def __getitem__(self, key):
         value = self._data[key]
         if isinstance(value, dict):
             return Object(value)
@@ -154,6 +159,7 @@ class Object(object):
     def __iadd__(self, other):
         self._data += other._data
         return self
+
 
 class Sigfox(object):
     """Interact with the Sigfox backend API.
@@ -197,18 +203,18 @@ class Sigfox(object):
         # The code here is only for documentation purposes.
         pass
 
-
     def __init__(self, login, password):
-        self.api = drest.API(SIGFOX_API_URL, debug=DEBUG,
-                             serialization_handler=drest.serialization.JsonSerializationHandler,
-                             serialize=True,
-                             deserialize=True,
-                             ignore_ssl_validation=IGNORE_SSL_VALIDATION,
-                             trailing_slash=False,
-                             request_handler = sigfoxapi.requesthandler.RequestHandler
-                             )
+        self.api = drest.API(
+            SIGFOX_API_URL,
+            debug=DEBUG,
+            serialization_handler=drest.serialization.JsonSerializationHandler,
+            serialize=True,
+            deserialize=True,
+            ignore_ssl_validation=IGNORE_SSL_VALIDATION,
+            trailing_slash=False,
+            request_handler=sigfoxapi.requesthandler.RequestHandler,
+        )
         self.api.auth(login, password)
-
 
     def request(self, method, path, params=None, headers=None):
         """Perform HTTP(S) request and return response data.
@@ -239,20 +245,24 @@ class Sigfox(object):
                 raise SigfoxApiError(str(e))
 
         try:
-            data = resp.data['data']
+            data = resp.data["data"]
         except (KeyError, TypeError):
             data = resp.data
 
         # Set Sigfox.next()`by extracting the parameters from the 'next' URL and
         # currying the self.request().
         try:
-            next_params = dict(urllib.parse.parse_qsl(resp.data['paging']['next'].split('?')[1]))
+            next_params = dict(
+                urllib.parse.parse_qsl(resp.data["paging"]["next"].split("?")[1])
+            )
             if next_params:
                 try:
                     params.update(next_params)
                 except AttributeError:
                     params = next_params
-                self.next = functools.partial(self.request,method, path, params, headers)
+                self.next = functools.partial(
+                    self.request, method, path, params, headers
+                )
             else:
                 self.next = None
         except (KeyError, TypeError):
@@ -262,7 +272,6 @@ class Sigfox(object):
             return Object(data)
         else:
             return data
-
 
     def group_info(self, groupid):
         """Get the description of a particular group.
@@ -287,8 +296,7 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/groups/' + groupid)
-
+        return self.request("GET", "/groups/" + groupid)
 
     def group_list(self, **kwargs):
         """Lists all children groups of your group.
@@ -316,10 +324,9 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/groups', params=kwargs)
+        return self.request("GET", "/groups", params=kwargs)
 
-
-    def devicetype_info(self,  devicetypeid):
+    def devicetype_info(self, devicetypeid):
         """Get the description of a particular device type.
 
            :param devicetypeid: The device type identifier.
@@ -337,8 +344,7 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devicetypes/' + devicetypeid)
-
+        return self.request("GET", "/device-types/" + devicetypeid)
 
     def devicetype_edit(self, devicetypeid, changes):
         """Edit a device type.
@@ -363,9 +369,8 @@ class Sigfox(object):
 
         """
 
-        changes.update({'id': devicetypeid})
-        return self.request('POST', '/devicetypes/edit', params=changes)
-
+        changes.update({"id": devicetypeid})
+        return self.request("POST", "/device-types/edit", params=changes)
 
     def devicetype_list(self):
         """Lists all device types available to your group.
@@ -388,8 +393,7 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devicetypes')
-
+        return self.request("GET", "/device-types/")
 
     def devicetype_errors(self, devicetypeid, **kwargs):
         """Get the communication down events for devices belonging to a device type.
@@ -424,9 +428,9 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devicetypes/%s/status/error' % (devicetypeid),
-                            params=kwargs)
-
+        return self.request(
+            "GET", "/device-types/%s/status/error" % (devicetypeid), params=kwargs
+        )
 
     def devicetype_warnings(self, devicetypeid, **kwargs):
         """Get the network issues events that were sent for devices
@@ -440,12 +444,12 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devicetypes/%s/status/warn' % (devicetypeid),
-                            params=kwargs)
+        return self.request(
+            "GET", "/device-types/%s/status/warn" % (devicetypeid), params=kwargs
+        )
 
-
-#    def devicetype_gelocsconfig(self, groupid):
-#        return self.request('GET', '/devicetypes/geolocs-config', params=groupid)
+    #    def devicetype_gelocsconfig(self, groupid):
+    #        return self.request('GET', '/device-types/geolocs-config', params=groupid)
 
     def devicetype_messages(self, devicetypeid, **kwargs):
         """Get the messages that were sent by all the devices of a device type.
@@ -479,9 +483,9 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devicetypes/%s/messages' % (devicetypeid),
-                            params=kwargs)
-
+        return self.request(
+            "GET", "/device-types/%s/messages" % (devicetypeid), params=kwargs
+        )
 
     def devicetype_disengage(self, devicetypeid):
         """Disengage sequence number check for next message of each device
@@ -493,8 +497,7 @@ class Sigfox(object):
            None
 
         """
-        return self.request('GET', '/devicetypes/%s/disengage' % (devicetypeid))
-
+        return self.request("GET", "/device-types/%s/disengage" % (devicetypeid))
 
     def callback_new(self, devicetypeid, callbacks):
         """Create new callbacks.
@@ -536,9 +539,9 @@ class Sigfox(object):
 
         """
 
-        return self.request('POST', '/devicetypes/%s/callbacks/new' % (devicetypeid),
-                            params=callbacks)
-
+        return self.request(
+            "POST", "/device-types/%s/callbacks/new" % (devicetypeid), params=callbacks
+        )
 
     def callback_list(self, devicetypeid):
         """List the callbacks for a device type.
@@ -567,8 +570,7 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devicetypes/%s/callbacks' % (devicetypeid))
-
+        return self.request("GET", "/device-types/%s/callbacks" % (devicetypeid))
 
     def callback_delete(self, devicetypeid, callbackid):
         """Delete a callback.
@@ -580,9 +582,9 @@ class Sigfox(object):
 
         """
 
-        return self.request('POST', '/devicetypes/%s/callbacks/%s/delete' %
-                            (devicetypeid, callbackid))
-
+        return self.request(
+            "POST", "/device-types/%s/callbacks/%s/delete" % (devicetypeid, callbackid)
+        )
 
     def callback_enable(self, devicetypeid, callbackid):
         """Enable a callback.
@@ -594,9 +596,11 @@ class Sigfox(object):
 
         """
 
-        return self.request('POST', '/devicetypes/%s/callbacks/%s/enable?enabled=true' %
-                            (devicetypeid, callbackid))
-
+        return self.request(
+            "POST",
+            "/device-types/%s/callbacks/%s/enable?enabled=true"
+            % (devicetypeid, callbackid),
+        )
 
     def callback_disable(self, devicetypeid, callbackid):
         """Disable a callback.
@@ -608,9 +612,11 @@ class Sigfox(object):
 
         """
 
-        return self.request('POST', '/devicetypes/%s/callbacks/%s/enable?enabled=false' %
-                            (devicetypeid, callbackid))
-
+        return self.request(
+            "POST",
+            "/device-types/%s/callbacks/%s/enable?enabled=false"
+            % (devicetypeid, callbackid),
+        )
 
     def callback_downlink(self, devicetypeid, callbackid):
         """Select a downlink callback.
@@ -622,8 +628,9 @@ class Sigfox(object):
 
         """
 
-        return self.request('POST', '/devicetypes/%s/callbacks/%s/downlink' % (devicetypeid, callbackid))
-
+        return self.request(
+            "POST", "/device-types/%s/callbacks/%s/downlink" % (devicetypeid, callbackid)
+        )
 
     def callback_errors(self, **kwargs):
         """Returns device messages where at least one callback has failed.
@@ -634,10 +641,9 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/callbacks/messages/error', params=kwargs)
+        return self.request("GET", "/callbacks/messages/error", params=kwargs)
 
-
-    def device_list(self, devicetypeid, **kwargs):
+    def device_list(self, **kwargs):
         """Lists the devices associated to a specific device type.
 
            :param devicetypeid: The device type identifier.
@@ -674,8 +680,9 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devicetypes/%s/devices' % (devicetypeid), params=kwargs)
-
+        return self.request(
+            "GET", "/devices", params=kwargs
+        )
 
     def device_info(self, deviceid):
         """Get information about a device.
@@ -709,8 +716,7 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devices/%s' % (deviceid))
-
+        return self.request("GET", "/devices/%s" % (deviceid))
 
     def device_tokenstate(self, deviceid):
         """Get information about a device's token
@@ -728,7 +734,7 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devices/%s/token-state' % (deviceid))
+        return self.request("GET", "/devices/%s/token-state" % (deviceid))
 
     def device_messages(self, deviceid, **kwargs):
         """Get the messages that were sent by a device.
@@ -762,7 +768,7 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devices/%s/messages' % (deviceid), params=kwargs)
+        return self.request("GET", "/devices/%s/messages" % (deviceid), params=kwargs)
 
     def device_locations(self, deviceid, **kwargs):
         """Get the messages location.
@@ -785,7 +791,7 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devices/%s/locations' % (deviceid), params=kwargs)
+        return self.request("GET", "/devices/%s/locations" % (deviceid), params=kwargs)
 
     def device_errors(self, deviceid, **kwargs):
         """Get the communication down events for a device.
@@ -820,7 +826,9 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devices/%s/status/error' % (deviceid), params=kwargs)
+        return self.request(
+            "GET", "/devices/%s/status/error" % (deviceid), params=kwargs
+        )
 
     def device_warnings(self, deviceid, **kwargs):
         """Get the network issues events that were sent for a device
@@ -855,7 +863,9 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devices/%s/status/warn' % (deviceid), params=kwargs)
+        return self.request(
+            "GET", "/devices/%s/status/warn" % (deviceid), params=kwargs
+        )
 
     def device_networkstate(self, deviceid):
         """Return the network status for a specific device.
@@ -869,7 +879,7 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devices/%s/networkstate' % (deviceid))
+        return self.request("GET", "/devices/%s/networkstate" % (deviceid))
 
     def device_messagemetrics(self, deviceid):
         """Returns the total number of device messages for one device, this day, this week and this month.
@@ -885,7 +895,7 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devices/%s/messages/metric' % (deviceid))
+        return self.request("GET", "/devices/%s/messages/metric" % (deviceid))
 
     def device_consumptions(self, deviceid, year):
         """Get a Device's consumptions for a year.
@@ -912,9 +922,9 @@ class Sigfox(object):
 
         """
 
-        return self.request('GET', '/devices/%s/consumptions/%s' % (deviceid, year))
+        return self.request("GET", "/devices/%s/consumptions/%s" % (deviceid, year))
 
-    def coverage_redundancy(self, lat, lng, mode='INDOOR'):
+    def coverage_redundancy(self, lat, lng, mode="INDOOR"):
         """Get base station redundancy for a given latitude and longitude.
 
            :param lat: The decimal latitude.
@@ -929,10 +939,10 @@ class Sigfox(object):
 
         """
 
-        params = {'lat': lat, 'lng': lng, 'mode': mode}
-        return self.request('GET', '/coverages/redundancy', params=params)
+        params = {"lat": lat, "lng": lng, "mode": mode}
+        return self.request("GET", "/coverages/redundancy", params=params)
 
-    def coverage_predictions(self, lat, lng, mode='INDOOR'):
+    def coverage_predictions(self, lat, lng, mode="INDOOR"):
         """Get coverage levels for a given latitude and longitude.
 
            :param lat: The decimal latitude.
@@ -948,8 +958,8 @@ class Sigfox(object):
 
         """
 
-        params = {'lat': lat, 'lng': lng}
-        return self.request('GET', '/coverages/global/predictions', params=params)
+        params = {"lat": lat, "lng": lng}
+        return self.request("GET", "/coverages/global/predictions", params=params)
 
     def user_list(self, groupid, **kwargs):
         """Lists all users registered with a role associated to a specific group.
@@ -997,8 +1007,8 @@ class Sigfox(object):
 
         """
 
-        kwargs.update({'groupId': groupid})
-        return self.request('GET', '/users', params=kwargs)
+        kwargs.update({"groupId": groupid})
+        return self.request("GET", "/users", params=kwargs)
 
 
-__all__ = ['DEBUG', 'IGNORE_SSL_VALIDATION', 'Sigfox', '_dictasobj']
+__all__ = ["DEBUG", "IGNORE_SSL_VALIDATION", "Sigfox", "_dictasobj"]

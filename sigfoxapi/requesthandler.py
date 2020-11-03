@@ -8,22 +8,21 @@ import os
 import sys
 
 if sys.version_info[0] < 3:
-    import httplib # pragma: no cover
-    from urllib import urlencode # pragma: no cover
-    from urllib2 import urlopen # pragma: no cover
+    import httplib  # pragma: no cover
+    from urllib import urlencode  # pragma: no cover
+    from urllib2 import urlopen  # pragma: no cover
 else:
-    from http import client as httplib # pragma: no cover
-    from urllib.parse import urlencode # pragma: no cover
-    from urllib.request import urlopen # pragma: no cover
+    from http import client as httplib  # pragma: no cover
+    from urllib.parse import urlencode  # pragma: no cover
+    from urllib.request import urlopen  # pragma: no cover
 
 import socket
 from httplib2 import Http, ServerNotFoundError
 
 from drest import exc, interface, meta, serialization, response, request
 
+
 class RequestHandler(request.RequestHandler):
-
-
     def make_request(self, method, url, params=None, headers=None):
         """
         Make a call to a resource based on path, and parameters.
@@ -64,21 +63,22 @@ class RequestHandler(request.RequestHandler):
         url = self._get_complete_url(method, url, params)
 
         if self._meta.debug:
-            print('DREST_DEBUG: method=%s url=%s params=%s headers=%s' % \
-                   (method, url, params, headers))
+            print(
+                "DREST_DEBUG: method=%s url=%s params=%s headers=%s"
+                % (method, url, params, headers)
+            )
 
-        if self._meta.serialize: 
+        if self._meta.serialize:
             payload = self._serialize(params)
         else:
             payload = urlencode(params)
 
-        if method is 'GET' and not self._meta.allow_get_body:
-            payload = ''
+        if method is "GET" and not self._meta.allow_get_body:
+            payload = ""
             if self._meta.debug:
                 print("DREST_DEBUG: supressing body for GET request")
 
-        res_headers, data = self._make_request(url, method, payload,
-                                               headers=headers)
+        res_headers, data = self._make_request(url, method, payload, headers=headers)
         unserialized_data = data
         serialized_data = None
         if self._meta.deserialize:
@@ -86,7 +86,7 @@ class RequestHandler(request.RequestHandler):
             data = self._deserialize(data)
 
         return_response = response.ResponseHandler(
-            int(res_headers['status']), data, res_headers,
-            )
+            int(res_headers["status"]), data, res_headers,
+        )
 
         return self.handle_response(return_response)
