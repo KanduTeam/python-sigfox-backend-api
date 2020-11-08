@@ -9,7 +9,7 @@ except ImportError:
 
 from os.path import join, dirname
 
-from sigfoxapi import __version__, __license__
+from sigfoxapi import __version__, __license__, __mail__, __author__
 
 readme = open(join(dirname(__file__), "README.rst")).read()
 
@@ -27,8 +27,8 @@ setup(
     version=__version__,
     description="Python wrapper for the Sigfox backend REST API",
     long_description=readme,
-    author="Markus Juenemann",
-    author_email="markus@juenemann.net",
+    author=__author__,
+    author_email=__mail__,
     url="https://github.com/mjuenema/python-sigfox-backend-api",
     packages=["sigfoxapi"],
     package_dir={"sigfoxapi": "sigfoxapi"},
