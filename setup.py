@@ -29,7 +29,7 @@ setup(
     long_description=readme,
     author=__author__,
     author_email=__mail__,
-    url="https://github.com/mjuenema/python-sigfox-backend-api",
+    url="https://github.com/KanduTeam/python-sigfox-backend-api",
     packages=["sigfoxapi"],
     package_dir={"sigfoxapi": "sigfoxapi"},
     include_package_data=True,
