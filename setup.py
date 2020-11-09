@@ -35,7 +35,6 @@ setup(
     include_package_data=True,
     install_requires=requirements,
     license=__license__,
-    zip_safe=False,
     keywords="sigfox",
     classifiers=[
         "Development Status :: 4 - Beta",
