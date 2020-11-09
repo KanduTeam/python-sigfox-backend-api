@@ -29,7 +29,7 @@ setup(
     long_description=readme,
     author=__author__,
     author_email=__mail__,
-    url="https://github.com/KanduTeam/python-sigfox-backend-api",
+    url="https://github.com/KanduTeam/python-sigfox-backend-api.git",
     packages=["sigfoxapi"],
     package_dir={"sigfoxapi": "sigfoxapi"},
     include_package_data=True,
@@ -41,7 +41,5 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Programming Language :: Python :: 3",
-    ],
-    test_suite="nose.collector",
-    tests_require=test_requirements,
+    ]
 )
