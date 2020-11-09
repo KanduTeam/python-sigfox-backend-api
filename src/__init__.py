@@ -15,7 +15,7 @@ import drest
 import drest.exc
 import drest.serialization
 
-import sigfoxapi.requesthandler
+import src.requesthandler
 
 __original_author__ = "Markus Juenemann <markus@juenemann.net>"
 __author__ = "Pierre-Aymeric MASSE"

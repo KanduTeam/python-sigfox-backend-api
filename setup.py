@@ -9,7 +9,7 @@ except ImportError:
 
 from os.path import join, dirname
 
-from sigfoxapi import __version__, __license__, __mail__, __author__
+from src import __version__, __license__, __mail__, __author__
 
 readme = open(join(dirname(__file__), "README.rst")).read()
 
@@ -23,15 +23,15 @@ test_requirements = [
 ]
 
 setup(
-    name="sigfoxapi",
+    name="sigfoxapi-fork",
     version=__version__,
     description="Python wrapper for the Sigfox backend REST API",
     long_description=readme,
     author=__author__,
     author_email=__mail__,
     url="https://github.com/KanduTeam/python-sigfox-backend-api.git",
-    packages=["sigfoxapi"],
-    package_dir={"sigfoxapi": "sigfoxapi"},
+    packages=["sigfoxapi-fork"],
+    package_dir={"sigfoxapi-fork": "src"},
     include_package_data=True,
     install_requires=requirements,
     license=__license__,
