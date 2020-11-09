@@ -2,7 +2,7 @@ Metadata-Version: 1.1
 Name: sigfoxapi
 Version: 0.3.1
 Summary: Python wrapper for the Sigfox backend REST API
-Home-page: https://github.com/mjuenema/python-sigfox-backend-api
+Home-page: https://github.com/KanduTeam/python-sigfox-backend-api.git
 Author: Pierre-Aymeric MASSE
 Author-email: cto@kandu.fr
 License: BSD 2-clause "Simplified" License
